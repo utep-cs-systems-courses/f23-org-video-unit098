@@ -70,15 +70,16 @@ void setper(int a){
   if(period = 0){}else{
   oldperiod = period;
   period=a;
+  buzzer_set_period(period);
+  
   }
 }
 
 void timehandle(){
   if((sec % 25) == 0){
+    if (OFFSET != 0){
     if (period == 0){
-      if(OFFSET!=0){
 	period = 1950;
-      }
     }
     else if(period > 2050){
     period = 1900;
@@ -100,6 +101,7 @@ void timehandle(){
     period += OFFSET;
     }
     buzzer_set_period(period);
+    }
   }
  if(sec == 50){
    if(xcords >= (SHORT_EDGE_PIXELS-50))
