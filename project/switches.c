@@ -4,9 +4,14 @@
 #include "led.h"
 #include "buzzer.h"
 #include "wdt.h"
+#include "lcdutils.h"
+#include "lcddraw.h"
 
+extern int xspeed;
+extern int yspeed;
+extern u_char xcords;
+extern u_char ycords;
 char switch_state_down, switch_state_changed; /* effectively boolean */
-
 static char 
 switch_update_interrupt_sense()
 {
@@ -56,6 +61,10 @@ switch_interrupt_handler2()
 {
   if(P2IFG & TSW1){
     setper(0);
+    xcords = 0;
+    xspeed = 0;
+    ycords = 0;
+    yspeed = 0;
     P2IFG &= ~TSW1;
   }
   if(P2IFG & TSW2){
@@ -64,6 +73,9 @@ switch_interrupt_handler2()
   }
   if(P2IFG & TSW3){
     P2IFG &= ~TSW3;
+    if((yspeed) > 10)
+    yspeed = 0;
+  yspeed = yspeed + 1;
     char sw3val = switch_update_interrupt_sense2();
     // setoff(1);
     setoff((sw3val & TSW3)? 0:10);
@@ -71,6 +83,9 @@ switch_interrupt_handler2()
   }
   if(P2IFG & TSW4){
   P2IFG &= ~TSW4;
+  if((xspeed) > 10)
+    xspeed = 0;
+  xspeed = xspeed + 1;
   char sw4val = switch_update_interrupt_sense2();
   //setoff(-1);
   setoff((sw4val & TSW4)? 0:-10);
